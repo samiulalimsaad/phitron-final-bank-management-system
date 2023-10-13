@@ -1,9 +1,8 @@
 import datetime
-import uuid
 
 
 class User:
-    __accounts = []
+    __accounts = {}
 
     def __init__(self, name, email, address, account_type):
         self.__name = name
@@ -13,12 +12,12 @@ class User:
 
         ##########
         self.__balance = 0
-        self.__account_number = uuid.uuid4()
+        self.__account_number = name  # uuid.uuid4()
         self.__transactions = []
         self.__loan_taken = 0
 
         ############
-        self.__accounts.append(self.__account_number)
+        self.__accounts[name] = self
 
     def __make_transaction(self, type: str, amount: str):
         # tr_type = {
@@ -47,7 +46,8 @@ class User:
             raise Exception("Withdrawal amount exceeded")
 
     def request_for_loan(self, amount: float | int) -> None:
-        if self.__loan_taken >= 2:
+        print(self.__loan_taken)
+        if self.__loan_taken <= 2:
             if amount > 0 and amount <= self.__balance:
                 self.__balance += amount
                 self.__loan_taken += 1
@@ -57,12 +57,15 @@ class User:
         else:
             raise Exception("you already taked loan 2 times")
 
-    def balance_transfer(self, amount: float | int) -> None:
-        if amount > 0 and amount <= self.__balance:
-            self.__balance += amount
-            self.__transactions.append(self.__make_transaction("loan", amount))
+    def balance_transfer(self, amount: float | int, acc_number: str) -> None:
+        if acc_number in self.__accounts:
+            acc = self.__accounts[acc_number]
+            acc.__balance += amount
+            self.__balance -= amount
+            print(acc)
+
         else:
-            raise Exception("Loan amount exceeded")
+            raise Exception("Account not found")
 
     @property
     def balance(self) -> int:
@@ -77,16 +80,29 @@ class User:
         return self.__accounts
 
 
-u = User("aaa", "aaa", "aaa", "aaa")
+aaa = User("aaa", "aaa", "aaa", "aaa")
 
-u.deposit(1000)
-u.deposit(1000)
-u.withdraw(300)
-u.request_for_loan(300)
-u.request_for_loan(300)
-u.request_for_loan(300)
-u.request_for_loan(300)
-print(u.balance)
-print(u.transactions)
+aaa.deposit(1000)
+aaa.deposit(1000)
+aaa.withdraw(300)
+aaa.request_for_loan(300)
+# aaa.request_for_loan(300)
+aaa.request_for_loan(300)
+# aaa.balance_transfer(300, "aaa")
+print(aaa.balance)
+# print(aaa.transactions)
 
-print(u.accounts)
+bbb = User("bbb", "bbb", "bbb", "bbb")
+
+bbb.deposit(1000)
+bbb.deposit(1000)
+bbb.withdraw(300)
+bbb.request_for_loan(300)
+# bbb.request_for_loan(300)
+bbb.request_for_loan(300)
+bbb.balance_transfer(300, "aaa")
+print(bbb.balance)
+print(aaa.balance)
+# print(bbb.transactions)
+
+print(bbb.accounts)
