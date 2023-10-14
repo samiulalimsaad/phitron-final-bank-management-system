@@ -9,11 +9,15 @@ class Bank:
         self.__loan_available = loan_available
 
     def create_account(self, name, email, address, account_type):
-        account_number = len(self.accounts) + 1
+        account_number = str(len(self.accounts) + 1)
         user = User(name, email, address, account_type, account_number)
         self.accounts[account_number] = user
-        print(f"account created successfully. Acount number: {account_number}")
+        print(f"account created successfully. Account number: {account_number}")
         return user, account_number
 
     def get_account(self, account_number) -> User:
         return self.accounts.get(account_number)
+
+    @property
+    def available_balance(self):
+        return self.__available_balance
